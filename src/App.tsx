@@ -1,12 +1,18 @@
-import './App.scss'
-import Sidebar from './scenes/Sidebar'
+import { ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+import { useMode, ColorModeContext } from "./theme";
 
-function App() {
+const App = () => {
+  const [theme, toggleColorMode] = useMode();
+
   return (
-   <div className='app'>
-        <Sidebar/>
-   </div>
-  )
-}
+    <ColorModeContext.Provider value={{ toggleColorMode }}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <button onClick={toggleColorMode}>Toggle mode</button>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
+  );
+};
 
-export default App
+export default App;
