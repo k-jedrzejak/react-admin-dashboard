@@ -1,8 +1,8 @@
 import { createContext, useState, useMemo } from "react";
-import { createTheme } from "@mui/material/styles"
+import { createTheme, ThemeOptions } from "@mui/material/styles"
 
 export const tokens = (mode: string) => ({
-   ...(mode === 'dark'
+   ...(mode === 'dark')
     ? {
         black: {
             100: "#d4d3d3",
@@ -116,10 +116,10 @@ export const tokens = (mode: string) => ({
             900: "#fbfbfb",
         },
 
-    }),
+    },
 });
 
-export const themeSettings = (mode: string) => {
+export const themeSettings = (mode: any) => {
     const colors = tokens(mode);
 
     return {
@@ -157,6 +157,36 @@ export const themeSettings = (mode: string) => {
                     default: colors.white[300]
                 }
             }),
-        }
-    }
-}
+        },
+    };
+};
+
+
+export interface ThemeContextType {
+    toggleColorMode: () => void;
+  }
+
+  export interface Theme extends Omit<ThemeOptions, 'components'> {
+    toggleColorMode: () => void;
+  }
+
+  export const ColorModeContext = createContext<ThemeContextType | null>(null);
+
+  export const useMode = (): [Theme, () => void] => {
+    const [mode, setMode] = useState("dark");
+
+    const toggleColorMode = () => {
+      setMode((prev) => (prev === "light" ? "dark" : "light"));
+    };
+
+    const themeOptions = useMemo(() => themeSettings(mode), [mode]);
+    const theme: Theme = useMemo(
+      () => ({
+        ...createTheme(themeOptions),
+        toggleColorMode,
+      }),
+      [themeOptions, toggleColorMode]
+    );
+
+    return [theme, toggleColorMode];
+  };
